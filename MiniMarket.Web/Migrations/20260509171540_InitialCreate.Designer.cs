@@ -12,8 +12,8 @@ using MiniMarket.Web.Data;
 namespace MiniMarket.Web.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260118162255_StockMinimo")]
-    partial class StockMinimo
+    [Migration("20260509171540_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -235,7 +235,7 @@ namespace MiniMarket.Web.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("EstaAbierta")
+                    b.Property<bool>("Estado")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("FechaApertura")
@@ -244,21 +244,19 @@ namespace MiniMarket.Web.Migrations
                     b.Property<DateTime?>("FechaCierre")
                         .HasColumnType("datetime2");
 
+                    b.Property<decimal?>("MontoCierre")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("MontoInicial")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("MontoReal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MontoSistema")
+                    b.Property<decimal>("TotalVentas")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("UsuarioId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
 
                     b.ToTable("AperturasCaja");
                 });
@@ -645,15 +643,6 @@ namespace MiniMarket.Web.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("MiniMarket.Web.Models.AperturaCaja", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("MiniMarket.Web.Models.Compra", b =>
