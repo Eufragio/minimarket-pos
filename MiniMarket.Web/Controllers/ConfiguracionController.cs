@@ -32,6 +32,7 @@ namespace MiniMarket.Web.Controllers
                 model.Telefono = configEntidad.Telefono;
                 model.EmailContacto = configEntidad.EmailContacto;
                 model.IgvPorcentaje = configEntidad.IgvPorcentaje;
+                model.MonedaSimbolo = configEntidad.MonedaSimbolo;
             }
             else
             {
@@ -64,7 +65,7 @@ namespace MiniMarket.Web.Controllers
                         Telefono = model.Telefono,
                         EmailContacto = model.EmailContacto,
                         IgvPorcentaje = model.IgvPorcentaje,
-                        MonedaSimbolo = "S/."
+                        MonedaSimbolo = model.MonedaSimbolo
                     };
                     _context.Configuraciones.Add(configEntidad);
                 }
@@ -77,7 +78,8 @@ namespace MiniMarket.Web.Controllers
                     configEntidad.Telefono = model.Telefono;
                     configEntidad.EmailContacto = model.EmailContacto;
                     configEntidad.IgvPorcentaje = model.IgvPorcentaje;
-                    
+                    configEntidad.MonedaSimbolo = model.MonedaSimbolo;
+
                     _context.Configuraciones.Update(configEntidad);
                 }
 

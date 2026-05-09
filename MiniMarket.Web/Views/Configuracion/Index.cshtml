@@ -82,6 +82,13 @@
                             </div>
                             <span asp-validation-for="IgvPorcentaje" class="text-danger small"></span>
                         </div>
+                        <div class="col-md-4">
+                            <label asp-for="MonedaSimbolo" class="form-label fw-bold"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-dollar-sign"></i></span>
+                                <input asp-for="MonedaSimbolo" class="form-control" placeholder="Ej: $, L, €" maxlength="5" />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">

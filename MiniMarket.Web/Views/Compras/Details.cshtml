@@ -1,4 +1,4 @@
-@model MiniMarket.Web.Models.Compra
+﻿@model MiniMarket.Web.Models.Compra
 
 @{
     ViewData["Title"] = "Detalle de Compra";
@@ -30,7 +30,7 @@
                     <dd class="col-sm-7">@(Model.Usuario?.UserName ?? "Sistema")</dd>
 
                     <dt class="col-sm-5 text-muted">Total:</dt>
-                    <dd class="col-sm-7 fw-bold text-success">S/. @Model.Total.ToString("N2")</dd>
+                    <dd class="col-sm-7 fw-bold text-success">$ @Model.Total.ToString("N2")</dd>
                 </dl>
             </div>
         </div>
@@ -60,8 +60,8 @@
                                         <span class="fw-bold">@item.Producto.Nombre</span>
                                     </td>
                                     <td class="text-center">@item.Cantidad</td>
-                                    <td class="text-end">S/. @item.PrecioUnitario.ToString("N2")</td>
-                                    <td class="text-end fw-bold">S/. @item.Total.ToString("N2")</td>
+                                    <td class="text-end">$ @item.PrecioUnitario.ToString("N2")</td>
+                                    <td class="text-end fw-bold">$ @item.Total.ToString("N2")</td>
                                 </tr>
                             }
                         </tbody>

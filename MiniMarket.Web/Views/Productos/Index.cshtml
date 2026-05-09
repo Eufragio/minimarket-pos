@@ -1,4 +1,4 @@
-@model IEnumerable<MiniMarket.Web.Models.Producto>
+﻿@model IEnumerable<MiniMarket.Web.Models.Producto>
 
 @{
     ViewData["Title"] = "Productos";
@@ -48,7 +48,7 @@
                                 <span class="badge bg-info text-dark">@item.Categoria.Nombre</span>
                             </td>
                             <td class="text-end fw-bold text-success">
-                                S/. @item.Precio.ToString("N2")
+                                $ @item.Precio.ToString("N2")
                             </td>
                             <td class="text-center">
                                 @if (item.Stock <= item.StockMinimo)

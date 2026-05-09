@@ -27,5 +27,8 @@ namespace MiniMarket.Web.Models
         [Range(0, 100)]
         [Display(Name = "Porcentaje de IGV")]
         public decimal IgvPorcentaje { get; set; } = 18.00m;
+
+        [Display(Name = "Símbolo de Moneda")]
+        public string MonedaSimbolo { get; set; } = "$";
     }
 }

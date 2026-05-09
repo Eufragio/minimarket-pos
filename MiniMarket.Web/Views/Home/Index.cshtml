@@ -52,7 +52,7 @@
                 <div style="z-index: 2;">
                     <h2>@Model.VentasHoy.ToString("N0")</h2> 
                     <p class="fw-bold">Ventas de Hoy</p>
-                    <small class="text-white-50">S/. @Model.VentasHoy.ToString("N2")</small>
+                    <small class="text-white-50">$ @Model.VentasHoy.ToString("N2")</small>
                 </div>
                 <i class="fas fa-shopping-basket icon-bg"></i>
             </div>
@@ -82,7 +82,7 @@
     <div class="col-md-3">
         <div class="card card-kpi bg-red-gradient p-4 h-100">
             <div style="z-index: 2;">
-                <h2>S/. @Model.CapitalEstimado.ToString("N0")</h2>
+                <h2>$ @Model.CapitalEstimado.ToString("N0")</h2>
                 <p class="fw-bold">Capital Estimado</p>
             </div>
             <i class="fas fa-wallet icon-bg"></i>
@@ -140,7 +140,7 @@
             data: {
                 labels: @Html.Raw(Json.Serialize(Model.FechasGrafico)),
                 datasets: [{
-                    label: 'Ingresos (S/.)',
+                    label: 'Ingresos ($)',
                     data: @Html.Raw(Json.Serialize(Model.VentasGrafico)),
                     backgroundColor: gradientBlue,
                     borderColor: '#4054b2',
@@ -161,7 +161,7 @@
                     y: {
                         beginAtZero: true,
                         grid: { borderDash: [5, 5] },
-                        ticks: { callback: function(value) { return 'S/. ' + value; } }
+                        ticks: { callback: function(value) { return '$ ' + value; } }
                     },
                     x: { grid: { display: false } }
                 }

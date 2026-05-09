@@ -1,11 +1,11 @@
-@using MiniMarket.Web.Data
+﻿@using MiniMarket.Web.Data
 @inject ApplicationDbContext _context
 @model MiniMarket.Web.Models.Producto
 
 @{
     ViewData["Title"] = "Eliminar Producto";
     var config = _context.Configuraciones.FirstOrDefault();
-    string moneda = config != null ? config.MonedaSimbolo : "S/.";
+    string moneda = config != null ? config.MonedaSimbolo : "$";
 }
 
 <div class="container mt-4">

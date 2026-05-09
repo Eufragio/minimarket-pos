@@ -1,4 +1,4 @@
-@model MiniMarket.Web.Models.AperturaCaja
+﻿@model MiniMarket.Web.Models.AperturaCaja
 @{ ViewData["Title"] = "Cerrar Caja"; }
 
 <div class="container mt-4">
@@ -13,16 +13,16 @@
                         <div class="row">
                             <div class="col-6 border-end">
                                 <small class="text-muted">Monto Inicial</small>
-                                <h5 class="fw-bold">S/. @Model.MontoInicial.ToString("N2")</h5>
+                                <h5 class="fw-bold">$ @Model.MontoInicial.ToString("N2")</h5>
                             </div>
                             <div class="col-6">
                                 <small class="text-muted">Ventas del Turno</small>
-                                <h5 class="fw-bold text-success">+ S/. @ViewBag.VentasSistema.ToString("N2")</h5>
+                                <h5 class="fw-bold text-success">+ $ @ViewBag.VentasSistema.ToString("N2")</h5>
                             </div>
                         </div>
                         <hr>
                         <h6 class="text-muted mb-1">Debería haber en caja:</h6>
-                        <h2 class="fw-bold text-dark">S/. @ViewBag.TotalEsperado.ToString("N2")</h2>
+                        <h2 class="fw-bold text-dark">$ @ViewBag.TotalEsperado.ToString("N2")</h2>
                     </div>
 
                     <form asp-action="Cerrar" method="post">

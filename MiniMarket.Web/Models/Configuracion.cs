@@ -21,6 +21,6 @@ namespace MiniMarket.Web.Models
         public decimal IgvPorcentaje { get; set; } = 18.00m;
 
         // CAMBIO: Renombrado a MonedaSimbolo para corregir el error en Vistas
-        public string MonedaSimbolo { get; set; } = "S/.";
+        public string MonedaSimbolo { get; set; } = "$";
     }
 }

@@ -87,7 +87,17 @@ MiniMarket.Web/
 
 ## Capturas de Pantalla
 
-> *(Agregar capturas del dashboard, POS y módulo de ventas)*
+### Dashboard — KPIs en tiempo real
+![Dashboard](docs/screenshots/Dashboard%20(KPIs).png)
+
+### Punto de Venta (POS)
+![POS](docs/screenshots/POS.png)
+
+### Catálogo de Productos
+![Productos](docs/screenshots/Lista%20de%20Productos.png)
+
+### Control de Caja / Turno
+![Caja](docs/screenshots/Control%20de%20Caja.png)
 
 ## Licencia
 

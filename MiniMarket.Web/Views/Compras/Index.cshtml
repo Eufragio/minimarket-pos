@@ -1,4 +1,4 @@
-@model IEnumerable<MiniMarket.Web.Models.Compra>
+﻿@model IEnumerable<MiniMarket.Web.Models.Compra>
 
 @{
     ViewData["Title"] = "Historial de Compras";
@@ -50,7 +50,7 @@
                             </td>
                             <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                             <td class="text-end fw-bold text-success">
-                                S/. @item.Total.ToString("N2")
+                                $ @item.Total.ToString("N2")
                             </td>
                             <td class="text-center">
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Ver Detalles">

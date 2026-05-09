@@ -1,4 +1,4 @@
-@model IEnumerable<MiniMarket.Web.Models.Venta>
+﻿@model IEnumerable<MiniMarket.Web.Models.Venta>
 
 @{
     ViewData["Title"] = "Historial de Ventas";
@@ -48,7 +48,7 @@
                                 <small class="text-muted">@(item.Usuario != null ? item.Usuario.UserName : "Sistema")</small>
                             </td>
                             <td class="text-end fw-bold text-success">
-                                S/. @item.Total.ToString("N2")
+                                $ @item.Total.ToString("N2")
                             </td>
                             <td class="text-center">
                                 <a asp-action="Ticket" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary" title="Ver Ticket" target="_blank">
