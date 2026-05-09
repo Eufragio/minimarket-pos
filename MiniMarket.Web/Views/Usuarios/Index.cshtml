@@ -1,0 +1,56 @@
+@model IEnumerable<MiniMarket.Web.Models.UsuarioViewModel>
+
+@{
+    ViewData["Title"] = "Gestión de Usuarios";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="text-primary"><i class="fas fa-user-shield me-2"></i>Usuarios del Sistema</h2>
+        <p class="text-muted">Administra los accesos y roles del personal.</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary shadow-sm">
+        <i class="fas fa-user-plus me-2"></i> NUEVO USUARIO
+    </a>
+</div>
+
+<div class="card shadow border-0">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="bg-light">
+                    <tr>
+                        <th>Email / Usuario</th>
+                        <th>Rol Asignado</th>
+                        <th class="text-end">ID Sistema</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                <i class="fas fa-user-circle text-muted me-2"></i>@item.Email
+                            </td>
+                            <td>
+                                @if (item.Rol == "Administrador")
+                                {
+                                    <span class="badge bg-danger">ADMINISTRADOR</span>
+                                }
+                                else if (item.Rol == "Cajero")
+                                {
+                                    <span class="badge bg-success">CAJERO</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@item.Rol</span>
+                                }
+                            </td>
+                            <td class="text-end text-muted small">@item.Id</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,100 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MiniMarket.Web.Data;
+using MiniMarket.Web.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MiniMarket.Web.Controllers
+{
+    [Authorize]
+    public class CajaController : Controller
+    {
+        private readonly ApplicationDbContext _context;
+
+        public CajaController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Muestra el estado de la caja del usuario actual
+        public async Task<IActionResult> Index()
+        {
+            var usuario = User.Identity.Name;
+
+            // Buscamos si hay una caja abierta para este usuario
+            var cajaAbierta = await _context.AperturasCaja
+                .FirstOrDefaultAsync(c => c.UsuarioId == usuario && c.Estado == true);
+
+            if (cajaAbierta != null)
+            {
+                // SI YA ESTÁ ABIERTA: Calculamos cuánto ha vendido hasta ahora
+                // Sumamos todas las ventas de este usuario desde que abrió la caja
+                var ventas = await _context.Ventas
+                    .Where(v => v.Usuario.UserName == usuario && v.Fecha >= cajaAbierta.FechaApertura)
+                    .SumAsync(v => v.Total);
+
+                // Actualizamos el modelo visualmente (no en BD aún)
+                cajaAbierta.TotalVentas = ventas;
+                
+                ViewBag.Estado = "Abierto";
+                return View(cajaAbierta);
+            }
+            else
+            {
+                // SI ESTÁ CERRADA: Mandamos modelo vacío para abrir nueva
+                ViewBag.Estado = "Cerrado";
+                return View(new AperturaCaja { MontoInicial = 0 });
+            }
+        }
+
+        // POST: Abrir Caja
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Abrir(decimal montoInicial)
+        {
+            var nuevaCaja = new AperturaCaja
+            {
+                UsuarioId = User.Identity.Name,
+                FechaApertura = DateTime.Now,
+                MontoInicial = montoInicial,
+                Estado = true
+            };
+
+            _context.AperturasCaja.Add(nuevaCaja);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: Cerrar Caja (Arqueo)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Cerrar(decimal montoCierre)
+        {
+            var usuario = User.Identity.Name;
+            var caja = await _context.AperturasCaja
+                .FirstOrDefaultAsync(c => c.UsuarioId == usuario && c.Estado == true);
+
+            if (caja == null) return RedirectToAction(nameof(Index));
+
+            // 1. Calcular total vendido real
+            var ventasTotal = await _context.Ventas
+                .Where(v => v.Usuario.UserName == usuario && v.Fecha >= caja.FechaApertura)
+                .SumAsync(v => v.Total);
+
+            // 2. Guardar cierre
+            caja.FechaCierre = DateTime.Now;
+            caja.TotalVentas = ventasTotal;
+            caja.MontoCierre = montoCierre;
+            caja.Estado = false; // Cerramos la caja
+
+            _context.Update(caja);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+    }
+}

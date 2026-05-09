@@ -1,0 +1,104 @@
+@model IEnumerable<MiniMarket.Web.Models.MovimientoInventario>
+
+@{
+    ViewData["Title"] = "Kardex de Movimientos";
+}
+
+<div class="container-fluid">
+    <div class="card shadow border-0 mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold text-primary"><i class="fas fa-exchange-alt me-2"></i>Kardex / Movimientos de Inventario</h5>
+        </div>
+        <div class="card-body bg-light">
+            <form asp-action="Index" method="get" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Seleccionar Producto a Consultar:</label>
+                    <select name="productoId" class="form-select select2" onchange="this.form.submit()">
+                        <option value="">-- Seleccione un producto --</option>
+                        @foreach (var item in (SelectList)ViewBag.Productos)
+                        {
+                            if (ViewBag.ProductoSeleccionado?.ToString() == item.Value)
+                            {
+                                <option value="@item.Value" selected>@item.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search"></i> Consultar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="card shadow border-0">
+            <div class="card-body">
+                <table class="table table-striped table-hover w-100">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Fecha y Hora</th>
+                            <th>Tipo Movimiento</th>
+                            <th>Referencia</th>
+                            <th class="text-center">Cantidad</th>
+                            <th>Usuario</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                <td>
+                                    @if (item.TipoMovimiento == "ENTRADA")
+                                    {
+                                        <span class="badge bg-success"><i class="fas fa-arrow-down me-1"></i>ENTRADA</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger"><i class="fas fa-arrow-up me-1"></i>SALIDA</span>
+                                    }
+                                </td>
+                                <td class="fw-bold">@item.Referencia</td>
+                                <td class="text-center fw-bold fs-5">
+                                    @if (item.TipoMovimiento == "ENTRADA")
+                                    {
+                                        <span class="text-success">+@item.Cantidad</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger">-@item.Cantidad</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">@item.Usuario</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (ViewBag.ProductoSeleccionado != null)
+    {
+        <div class="alert alert-warning text-center">
+            Este producto no tiene movimientos registrados aún.
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: "Buscar producto..."
+            });
+        });
+    </script>
+}

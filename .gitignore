@@ -1,0 +1,54 @@
+# Build output
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+bld/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.sln.docstates
+*.rsuser
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/
+!**/packages/build/
+
+# Published output
+[Pp]ublish/
+[Pp]ublish[Oo]utput*/
+
+# Secrets & environment
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+*.pfx
+*.p12
+
+# SQL Server backups
+*.bak
+*.mdf
+*.ldf
+BK_BD_*/
+
+# Compressed backups
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Test results
+[Tt]est[Rr]esult*/
+[Cc]overage*/

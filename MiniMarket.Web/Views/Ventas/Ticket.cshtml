@@ -1,0 +1,112 @@
+@model MiniMarket.Web.Models.Venta
+
+@{
+    Layout = null;
+    // Recuperamos los datos de la empresa que envió el controlador
+    var empresa = ViewBag.Configuracion as MiniMarket.Web.Models.Configuracion;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <title>Ticket #@Model.Id.ToString("D5")</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            width: 80mm;
+            margin: 0 auto;
+            padding: 5px;
+            color: #000;
+            font-size: 12px;
+        }
+        .centrado { text-align: center; }
+        .derecha { text-align: right; }
+        .linea { border-top: 1px dashed #000; margin: 5px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 2px 0; vertical-align: top; }
+
+        /* Usamos @@media para que Razor no se confunda */
+        @@media print {
+            .no-print { display: none; }
+        }
+
+        .btn-imprimir {
+            background-color: #0d6efd; color: white; border: none;
+            padding: 10px 20px; border-radius: 5px; cursor: pointer;
+            width: 100%; margin-bottom: 10px; font-weight: bold;
+        }
+        .marca { font-size: 16px; font-weight: bold; margin-bottom: 2px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button onclick="window.print()" class="btn-imprimir">🖨 IMPRIMIR</button>
+    </div>
+
+    <div class="centrado">
+        @if (empresa != null)
+        {
+            <div class="marca">@empresa.NombreEmpresa</div>
+            <div>RUC: @empresa.Ruc</div>
+            <div>@empresa.Direccion</div>
+            @if (!string.IsNullOrEmpty(empresa.Telefono)) { <div>Tel: @empresa.Telefono</div> }
+        }
+        else
+        {
+            <div class="marca">MINIMARKET</div>
+            <div>(Datos no configurados)</div>
+        }
+        <div class="linea"></div>
+    </div>
+
+    <div>
+        <strong>Ticket:</strong> #@Model.Id.ToString("D6")<br />
+        <strong>Fecha:</strong> @Model.Fecha.ToString("dd/MM/yyyy HH:mm")<br />
+        <strong>Cajero:</strong> @(Model.Usuario != null ? Model.Usuario.UserName : "Sistema")<br />
+        <strong>Cliente:</strong> @(Model.Cliente != null ? Model.Cliente.Nombre : "Público General")
+    </div>
+
+    <div class="linea"></div>
+
+    <table>
+        <thead>
+            <tr style="text-align:left;">
+                <th style="width:55%">Prod.</th>
+                <th style="width:10%">Cant.</th>
+                <th style="width:35%" class="derecha">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Detalles)
+            {
+                <tr>
+                    <td>@item.Producto.Nombre</td>
+                    <td style="text-align:center;">@item.Cantidad</td>
+                    <td class="derecha">@item.SubTotal.ToString("N2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="linea"></div>
+
+    <table style="font-size: 14px; font-weight: bold;">
+        <tr>
+            <td class="derecha">TOTAL:</td>
+            <td class="derecha">S/. @Model.Total.ToString("N2")</td>
+        </tr>
+    </table>
+
+    <div class="linea"></div>
+
+    <div class="centrado">
+        <br />
+        ¡GRACIAS POR SU COMPRA!
+        <br />
+        @if(empresa != null) { <small>@empresa.EmailContacto</small> }
+    </div>
+
+</body>
+</html>

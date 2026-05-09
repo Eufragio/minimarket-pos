@@ -1,0 +1,275 @@
+﻿@model MiniMarket.Web.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>
+    .card-kpi {
+        border: none;
+        border-radius: 15px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    .card-kpi:hover {
+        transform: translateY(-5px);
+    }
+    .card-kpi .icon-bg {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 4rem;
+        opacity: 0.2;
+    }
+    .card-kpi h2 { font-weight: bold; margin: 0; font-size: 2.5rem; }
+    .card-kpi p { margin: 0; font-size: 0.9rem; opacity: 0.9; }
+
+    /* Colores degradados */
+    .bg-blue-gradient { background: linear-gradient(45deg, #4054b2, #5a73e8); }
+    .bg-green-gradient { background: linear-gradient(45deg, #0fb566, #2ecc71); }
+    .bg-yellow-gradient { background: linear-gradient(45deg, #f39c12, #f1c40f); }
+    .bg-red-gradient { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold text-dark">Resumen Ejecutivo</h2>
+        <p class="text-muted">Estado actual de tu negocio</p>
+    </div>
+    <div class="bg-white p-2 rounded shadow-sm border text-muted">
+        <i class="fas fa-calendar-alt me-2"></i> @DateTime.Now.ToString("dd MMMM, yyyy")
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card card-kpi bg-blue-gradient p-4 h-100">
+            <div class="d-flex align-items-center justify-content-between">
+                <div style="z-index: 2;">
+                    <h2>@Model.VentasHoy.ToString("N0")</h2> 
+                    <p class="fw-bold">Ventas de Hoy</p>
+                    <small class="text-white-50">S/. @Model.VentasHoy.ToString("N2")</small>
+                </div>
+                <i class="fas fa-shopping-basket icon-bg"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-kpi bg-green-gradient p-4 h-100">
+            <div style="z-index: 2;">
+                <h2>@Model.TotalProductos</h2>
+                <p class="fw-bold">Productos Activos</p>
+            </div>
+            <i class="fas fa-box-open icon-bg"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-kpi bg-yellow-gradient p-4 h-100">
+            <div style="z-index: 2;">
+                <h2>@Model.TotalCategorias</h2>
+                <p class="fw-bold">Categorías</p>
+            </div>
+            <i class="fas fa-tags icon-bg"></i>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card card-kpi bg-red-gradient p-4 h-100">
+            <div style="z-index: 2;">
+                <h2>S/. @Model.CapitalEstimado.ToString("N0")</h2>
+                <p class="fw-bold">Capital Estimado</p>
+            </div>
+            <i class="fas fa-wallet icon-bg"></i>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card shadow border-0 h-100" style="border-radius: 15px;">
+            <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary"><i class="fas fa-chart-line me-2"></i>Tendencia de Ingresos</h6>
+                <span class="badge bg-light text-primary border">Últimos 7 días</span>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="graficoVentas"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow border-0 h-100" style="border-radius: 15px;">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="m-0 fw-bold text-success"><i class="fas fa-chart-pie me-2"></i>Top Productos</h6>
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                <div style="height: 250px; width: 100%; position: relative;">
+                    <canvas id="graficoTop"></canvas>
+                </div>
+                <div class="mt-3 text-center">
+                    <small class="text-muted">Distribución de los 5 más vendidos</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // ============================================
+        // 1. GRÁFICO DE LÍNEAS (INGRESOS)
+        // ============================================
+        var ctxLine = document.getElementById('graficoVentas').getContext('2d');
+        
+        var gradientBlue = ctxLine.createLinearGradient(0, 0, 0, 400);
+        gradientBlue.addColorStop(0, 'rgba(64, 84, 178, 0.5)');
+        gradientBlue.addColorStop(1, 'rgba(64, 84, 178, 0.0)');
+
+        new Chart(ctxLine, {
+            type: 'line',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.FechasGrafico)),
+                datasets: [{
+                    label: 'Ingresos (S/.)',
+                    data: @Html.Raw(Json.Serialize(Model.VentasGrafico)),
+                    backgroundColor: gradientBlue,
+                    borderColor: '#4054b2',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#4054b2',
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { borderDash: [5, 5] },
+                        ticks: { callback: function(value) { return 'S/. ' + value; } }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        // ============================================
+        // 2. GRÁFICO DONUT (TOP PRODUCTOS) - CORREGIDO
+        // ============================================
+        var ctxDonut = document.getElementById('graficoTop').getContext('2d');
+        
+        var _nombres = @Html.Raw(Json.Serialize(Model.TopProductosNombres));
+        var _cantidades = @Html.Raw(Json.Serialize(Model.TopProductosCantidades));
+        
+        var isEmpty = _nombres.length === 0;
+        if(isEmpty) {
+            _nombres = ["Sin ventas aún"];
+            _cantidades = [1];
+        }
+
+        new Chart(ctxDonut, {
+            type: 'doughnut',
+            data: {
+                labels: _nombres,
+                datasets: [{
+                    data: _cantidades,
+                    backgroundColor: isEmpty ? ['#e9ecef'] : [ 
+                        '#4054b2', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6' 
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                    hoverOffset: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                layout: {
+                    padding: 10 
+                },
+                plugins: {
+                    legend: { 
+                        display: !isEmpty, 
+                        position: 'bottom',
+                        labels: { 
+                            usePointStyle: true, 
+                            boxWidth: 8,
+                            padding: 15,
+                            font: { size: 11 },
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map((label, i) => {
+                                        let text = label;
+                                        if (text.length > 18) { text = text.substring(0, 18) + '...'; } 
+                                        const ds = data.datasets[0];
+                                        return {
+                                            text: text,
+                                            fillStyle: ds.backgroundColor[i],
+                                            strokeStyle: ds.borderColor[i],
+                                            lineWidth: ds.borderWidth,
+                                            hidden: isNaN(ds.data[i]) || chart.getDatasetMeta(0).data[i].hidden,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        } 
+                    },
+                    tooltip: {
+                        enabled: !isEmpty,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.parsed;
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} Und. (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            },
+            plugins: [{
+                id: 'textCenter',
+                beforeDraw: function(chart) {
+                    if (isEmpty) return;
+                    var width = chart.width, height = chart.height, ctx = chart.ctx;
+                    ctx.restore();
+                    var fontSize = (height / 140).toFixed(2);
+                    ctx.font = "bold " + fontSize + "em sans-serif";
+                    ctx.textBaseline = "middle";
+                    ctx.fillStyle = "#333";
+                    
+                    let totalTop = _cantidades.reduce((a, b) => a + b, 0);
+                    
+                    var text = totalTop.toString(), textX = Math.round((width - ctx.measureText(text).width) / 2), textY = height / 2.1;
+                    ctx.fillText(text, textX, textY);
+                    
+                    ctx.font = "normal " + (fontSize*0.5).toFixed(2) + "em sans-serif";
+                    ctx.fillStyle = "#6c757d";
+                    var text2 = "Unidades", text2X = Math.round((width - ctx.measureText(text2).width) / 2), text2Y = height / 1.75;
+                    ctx.fillText(text2, text2X, text2Y);
+                    ctx.save();
+                }
+            }]
+        });
+    </script>
+}

@@ -1,0 +1,99 @@
+@model MiniMarket.Web.Models.AperturaCaja
+
+@{
+    ViewData["Title"] = "Control de Caja";
+    string estado = ViewBag.Estado;
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        
+        <div class="d-flex align-items-center mb-4">
+            <div class="me-3 bg-white p-3 rounded-circle shadow-sm text-primary">
+                <i class="fas fa-cash-register fa-2x"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold mb-0">Control de Turno</h2>
+                <p class="text-muted mb-0">Gestiona la apertura y cierre de tu caja.</p>
+            </div>
+        </div>
+
+        @if (estado == "Cerrado")
+        {
+            <div class="card shadow border-0 border-start border-primary border-5">
+                <div class="card-body p-5 text-center">
+                    <h3 class="text-dark mb-3">👋 ¡Hola, @User.Identity.Name!</h3>
+                    <p class="text-muted mb-4">Para comenzar a vender, necesitas abrir tu caja indicando el dinero inicial (sencillo).</p>
+
+                    <form asp-action="Abrir" method="post" class="d-inline-block w-100" style="max-width: 400px;">
+                        <div class="form-floating mb-4">
+                            <input type="number" name="montoInicial" class="form-control fs-4 fw-bold text-center text-primary" id="montoInput" placeholder="0.00" step="0.10" required />
+                            <label for="montoInput">Monto Inicial (S/.)</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 shadow">
+                            <i class="fas fa-lock-open me-2"></i> ABRIR CAJA
+                        </button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card shadow border-0">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-check-circle me-2"></i>Turno Abierto</h5>
+                    <span class="badge bg-white text-success">@Model.FechaApertura.ToString("hh:mm tt")</span>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <div class="row text-center mb-4">
+                        <div class="col-md-6 border-end">
+                            <small class="text-muted text-uppercase fw-bold">Dinero Inicial</small>
+                            <h2 class="text-secondary">S/. @Model.MontoInicial.ToString("N2")</h2>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted text-uppercase fw-bold">Ventas del Turno</small>
+                            <h2 class="text-success">S/. @Model.TotalVentas.ToString("N2")</h2>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info border-0 d-flex align-items-center" role="alert">
+                        <i class="fas fa-info-circle fa-2x me-3"></i>
+                        <div>
+                            <strong>Total Esperado en Caja:</strong> <br />
+                            Deberías tener físicamente: <span class="fs-5 fw-bold">S/. @((Model.MontoInicial + Model.TotalVentas).ToString("N2"))</span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <h5 class="mb-3">Cerrar Turno (Arqueo)</h5>
+                    <form asp-action="Cerrar" method="post">
+                        <div class="row align-items-end">
+                            <div class="col-md-8">
+                                <label class="form-label">¿Cuánto dinero contaste en efectivo?</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">S/.</span>
+                                    <input type="number" name="montoCierre" class="form-control fw-bold" step="0.10" required placeholder="0.00" />
+                                </div>
+                                <div class="form-text">Cuenta billetes y monedas e ingresa el total.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('¿Estás seguro de cerrar el turno?');">
+                                    <i class="fas fa-lock me-2"></i> CERRAR CAJA
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <a asp-controller="Ventas" asp-action="Create" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="fas fa-shopping-cart me-2"></i> IR A VENDER
+                </a>
+            </div>
+        }
+    </div>
+</div>
